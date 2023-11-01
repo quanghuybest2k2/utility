@@ -13,7 +13,7 @@ class StringUtil
      * @param int $length Độ dài tối đa của chuỗi cắt
      * @return string Chuỗi đã cắt với dấu chấm ba nếu được thêm vào
      */
-    public static function truncate($text, $length)
+    public static function truncate($text, $length): string
     {
         if (mb_strlen($text) > $length) {
             $text = mb_substr($text, 0, $length);
@@ -34,7 +34,7 @@ class StringUtil
      * @param string $text Chuỗi cần chuyển đổi thành slug
      * @return string Slug được tạo ra từ chuỗi đầu vào
      */
-    public static function slugify($text)
+    public static function slugify($text): string
     {
         // Chuyển đổi chuỗi tiếng Việt có dấu thành chuỗi không dấu
         $text = ASCII::to_ascii($text);
@@ -49,27 +49,29 @@ class StringUtil
 
     /**
      * Định dạng số tiền thành chuỗi có dấu phẩy ngăn cách hàng nghìn, triệu, tỷ, ...
+     * Lý do trả về string, để hiển thị, tránh vượt quá giới hạn kiểu int
      *
      * @param float $number Số tiền cần định dạng
      * @return string Chuỗi số tiền đã được định dạng
      */
-    public static function formatCurrency($number)
+    public static function formatCurrency($number): string
     {
         return number_format($number, 0, '.', ',');
     }
 
     /**
-     * Rút ngắn tên người dùng hoặc tên file thành dạng viết tắt.
+     * Rút ngắn tên người dùng hoặc tên file thành dạng viết tắt không dấu.
      *
      * @param string $name Tên cần rút ngắn
      * @return string Tên đã được rút ngắn
      */
-    public static function shortenName($name)
+    public static function shortenName($name): string
     {
         $parts = explode(' ', $name);
         $shortenedName = '';
         foreach ($parts as $part) {
-            $shortenedName .= strtoupper($part[0]);
+            $partWithoutAccents = ASCII::to_ascii($part);
+            $shortenedName .= strtoupper($partWithoutAccents[0]);
         }
         return $shortenedName;
     }
@@ -81,9 +83,9 @@ class StringUtil
      * @param string $keyword Từ khóa cần tìm kiếm
      * @return bool True nếu chuỗi chứa từ khóa, ngược lại trả về false
      */
-    public static function containsKeyword($text, $keyword)
+    public static function containsKeyword($text, $keyword): bool
     {
-        return stripos($text, $keyword) !== false;
+        return mb_stripos($text, $keyword, 0, 'UTF-8') !== false;
     }
 
 }

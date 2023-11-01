@@ -27,8 +27,8 @@ class StringUtilTest extends TestCase
 
     public function testTruncateTextWithSpaceAtMaxLength()
     {
-        $input = 'This is a long text that needs to be truncated';
-        $length = 47; // Length of input text
+        $input = 'Đây là ký tự tối đa nè bạn ơi!';
+        $length = 30; // max length
         $result = StringUtil::truncate($input, $length);
         $this->assertEquals($input, $result);
     }
@@ -36,7 +36,7 @@ class StringUtilTest extends TestCase
     public function testTruncateTextWithSpaceAtMaxLengthPlusOne()
     {
         $input = 'This is a long text that needs to be truncated';
-        $length = 48; // Length of input text + 1
+        $length = 46; // Length of input text + 1
         $result = StringUtil::truncate($input, $length);
         $expectedOutput = 'This is a long text that needs to be truncated';
         $this->assertEquals($expectedOutput, $result);
@@ -97,49 +97,105 @@ class StringUtilTest extends TestCase
     public function testFormatCurrencyWithInteger()
     {
         $number = 1000;
-        $formattedNumber = StringUtil::formatCurrency($number);
-        $this->assertEquals('1,000', $formattedNumber);
+        $expectedOutput = '1,000';
+        $result = StringUtil::formatCurrency($number);
+        $this->assertEquals($expectedOutput, $result);
     }
 
     public function testFormatCurrencyWithFloat()
     {
         $number = 12345.67;
-        $formattedNumber = StringUtil::formatCurrency($number);
-        $this->assertEquals('12,346', $formattedNumber);
+        $expectedOutput = '12,346';
+        $result = StringUtil::formatCurrency($number);
+        $this->assertEquals($expectedOutput, $result);
     }
 
     public function testFormatCurrencyWithLargeNumber()
     {
         $number = 1000000;
-        $formattedNumber = StringUtil::formatCurrency($number);
-        $this->assertEquals('1,000,000', $formattedNumber);
+        $expectedOutput = '1,000,000';
+        $result = StringUtil::formatCurrency($number);
+        echo $result;
+        $this->assertEquals($expectedOutput, $result);
     }
 
     public function testFormatCurrencyWithNegativeNumber()
     {
         $number = -5000;
-        $formattedNumber = StringUtil::formatCurrency($number);
-        $this->assertEquals('-5,000', $formattedNumber);
+        $expectedOutput = '-5,000';
+        $result = StringUtil::formatCurrency($number);
+        $this->assertEquals($expectedOutput, $result);
     }
 
     //------------------------------------- testShortenName() ----------------------------------------
-
-    public function testShortenName()
+    public function testShortenNameWithMultipleWords()
     {
-        $name = 'John Doe';
-        $shortenedName = StringUtil::shortenName($name);
-        $this->assertEquals('JD', $shortenedName);
+        $inputName = "Đoàn Quang Huy";
+        $expectedOutput = "DQH";
+        $result = StringUtil::shortenName($inputName);
+//        echo $result;
+        $this->assertEquals($expectedOutput, $result);
+    }
+
+    public function testShortenNameWithSingleWord()
+    {
+        $inputName = "Nguyễn";
+        $expectedOutput = "N";
+        $this->assertEquals($expectedOutput, StringUtil::shortenName($inputName));
+    }
+
+    public function testShortenNameWithEmptyString()
+    {
+        $inputName = "   ";
+        $expectedOutput = "";
+        $this->assertEquals($expectedOutput, StringUtil::shortenName($inputName));
+    }
+
+    public function testShortenNameWithLeadingTrailingSpaces()
+    {
+        $inputName = "  Nguyễn      Quỳnh ";
+        $expectedOutput = "NQ";
+        $this->assertEquals($expectedOutput, StringUtil::shortenName($inputName));
     }
 
     //------------------------------------- testContainsKeyword() ----------------------------------------
-    public function testContainsKeyword()
+    public function testContainsKeywordWithMatchingKeyword()
     {
-        $text = 'This is a sample text containing the word "sample".';
-        $keyword = 'sample';
+        $text = 'Huy Cận - Nhà thơ hiện đại, không chỉ biết làm thơ mà còn biết nói đạo lý';
+        $keyword = 'Nhà thơ';
+        $result = StringUtil::containsKeyword($text, $keyword);
+        $this->assertTrue($result);
+    }
 
-        $this->assertTrue(StringUtil::containsKeyword($text, $keyword));
+    public function testContainsKeywordWithNonMatchingKeyword()
+    {
+        $text = 'Huy Cận - Nhà thơ hiện đại, không chỉ biết làm thơ mà còn biết nói đạo lý';
+        $keyword = 'Sơn Tùng MTP';// từ này không có
+        $result = StringUtil::containsKeyword($text, $keyword);
+        $this->assertFalse($result);
+    }
 
-        $text = 'This text does not contain the keyword.';
-        $this->assertFalse(StringUtil::containsKeyword($text, $keyword));
+    public function testContainsKeywordWithEmptyText()
+    {
+        $text = '';
+        $keyword = 'Sơn Tùng MTP';
+        $result = StringUtil::containsKeyword($text, $keyword);
+        $this->assertFalse($result);
+    }
+
+    public function testContainsKeywordWithEmptyKeyword()
+    {
+        $text = 'Huy Cận - Nhà thơ hiện đại, không chỉ biết làm thơ mà còn biết nói đạo lý';
+        $keyword = '';
+        $result = StringUtil::containsKeyword($text, $keyword);
+        $this->assertTrue($result);
+    }
+
+    public function testContainsKeywordWithCaseInsensitiveMatch()
+    {
+        $text = 'Huy Cận - Nhà thơ hiện đại, không chỉ biết làm thơ mà còn biết nói đạo lý';
+        $keyword = 'NHÀ THƠ';// không phân biệt hoa thường
+        $result = StringUtil::containsKeyword($text, $keyword);
+        $this->assertTrue($result);
     }
 }
