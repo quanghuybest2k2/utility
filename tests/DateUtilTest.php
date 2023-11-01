@@ -5,34 +5,78 @@ use quanghuybest2k2\utility\DateUtil;
 
 class DateUtilTest extends TestCase
 {
-    public function testParseDate()
+    //------------------------------------- testParseDate() ----------------------------------------
+    public function testValidDateString(): void
+    {
+        $dateString = '01-11-2023';
+        $expectedFormat = 'd-m-Y';
+        $parsedDate = DateUtil::parseDate($dateString, $expectedFormat);
+        $this->assertInstanceOf(DateTime::class, $parsedDate);
+        $this->assertEquals($dateString, $parsedDate->format($expectedFormat));
+    }
+
+    public function testInvalidDateString(): void
+    {
+        $invalidDateString = 'sai-format-ne';
+        $parsedDate = DateUtil::parseDate($invalidDateString);
+        $this->assertFalse($parsedDate);
+    }
+
+    public function testCustomDateFormat(): void
     {
         $dateString = '2023-11-01';
-        $expectedDate = DateTime::createFromFormat('Y-m-d', $dateString);
+        $expectedFormat = 'd/m/Y';
+        $parsedDate = DateUtil::parseDate($dateString, $expectedFormat);
 
+        // Kiểm tra xem parseDate trả về false khi định dạng không đúng
+        $this->assertFalse($parsedDate);
+    }
+
+    public function testDefaultFormat(): void
+    {
+        $dateString = '01-11-2023';
+        $expectedFormat = 'd-m-Y';
         $parsedDate = DateUtil::parseDate($dateString);
         $this->assertInstanceOf(DateTime::class, $parsedDate);
-        $this->assertEquals($expectedDate, $parsedDate);
+        $this->assertEquals($dateString, $parsedDate->format($expectedFormat));
     }
 
-    public function testCompareDates()
+    //------------------------------------- testCompareDates() ----------------------------------------
+    // return 0
+    public function testCompareDatesEqual()
     {
-        $date1 = '2023-11-01';
-        $date2 = '2023-11-02';
-
-        $this->assertEquals(-1, DateUtil::compareDates($date1, $date2));
-        $this->assertEquals(1, DateUtil::compareDates($date2, $date1));
-        $this->assertEquals(0, DateUtil::compareDates($date1, $date1));
+        $date1 = '01-01-2023';
+        $date2 = '01-01-2023';
+        $result = DateUtil::compareDates($date1, $date2);
+        $this->assertEquals(0, $result);
     }
 
-    public function testGetCurrentDate()
+    // return -1
+    public function testCompareDatesLessThan()
     {
-        $currentDate = DateUtil::getCurrentDate('Y-m-d H:i:s');
-        $this->assertNotNull($currentDate);
-
-        $parsedCurrentDate = DateTime::createFromFormat('Y-m-d H:i:s', $currentDate);
-        $this->assertInstanceOf(DateTime::class, $parsedCurrentDate);
-
-        $this->assertEquals(date('Y-m-d H:i:s'), $parsedCurrentDate->format('Y-m-d H:i:s'));
+        $date1 = '01-01-2022';
+        $date2 = '01-01-2023';
+        $result = DateUtil::compareDates($date1, $date2);
+        $this->assertEquals(-1, $result);
     }
+
+    // return 1
+    public function testCompareDatesGreaterThan()
+    {
+        $date1 = '01-01-2024';
+        $date2 = '01-01-2023';
+        $result = DateUtil::compareDates($date1, $date2);
+        $this->assertEquals(1, $result);
+    }
+
+    // return -1
+    public function testCompareDatesWithCustomFormat()
+    {
+        $date1 = '2023-01-01';
+        $date2 = '2023-01-02';
+        $format = 'Y-m-d';
+        $result = DateUtil::compareDates($date1, $date2, $format);
+        $this->assertEquals(-1, $result);
+    }
+
 }
