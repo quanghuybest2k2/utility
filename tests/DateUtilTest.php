@@ -79,4 +79,46 @@ class DateUtilTest extends TestCase
         $this->assertEquals(-1, $result);
     }
 
+    //------------------------------------- testGetCurrentDate() ----------------------------------------
+    public function testGetCurrentDateWithDefaultFormat()
+    {
+        $currentDate = DateUtil::getCurrentDate();
+        $expectedFormat = date('d-m-Y H:i:s');
+        $this->assertMatchesRegularExpression('/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}:\d{2}$/', $currentDate);
+        $this->assertEquals($expectedFormat, $currentDate);
+    }
+
+    public function testGetCurrentDateWithCustomFormat()
+    {
+        $customFormat = 'Y/m/d';
+        $currentDate = DateUtil::getCurrentDate($customFormat);
+        $expectedFormat = date($customFormat);
+        $this->assertMatchesRegularExpression('/^\d{4}\/\d{2}\/\d{2}$/', $currentDate);
+        $this->assertEquals($expectedFormat, $currentDate);
+    }
+
+    public function testGetCurrentDateWithInvalidFormat()
+    {
+        $invalidFormat = 'invalid_format';
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Invalid date format '{$invalidFormat}'");
+
+        DateUtil::getCurrentDate($invalidFormat);
+    }
+
+    //------------------------------------- testGetCurrentDateTimeInVietnamTimeZone() ----------------------------------------
+
+    //------------------------------------- testConvertToVietnamTimeZone() ----------------------------------------
+
+    //------------------------------------- testIsDateTimeInRange() ----------------------------------------
+
+    //------------------------------------- testGetDaysDifference() ----------------------------------------
+
+    //------------------------------------- testGetMonthName() ----------------------------------------
+
+    //------------------------------------- testGetDayOfWeek() ----------------------------------------
+
+    //------------------------------------- testIsLeapYear() ----------------------------------------
+
 }

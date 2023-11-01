@@ -4,6 +4,7 @@ namespace quanghuybest2k2\utility;
 
 use DateTime;
 use DateTimeZone;
+use PHPUnit\Logging\Exception;
 
 class DateUtil
 {
@@ -49,7 +50,13 @@ class DateUtil
      */
     public static function getCurrentDate($format = 'd-m-Y H:i:s'): string
     {
-        return (new DateTime())->format($format);
+        $dateTime = DateTime::createFromFormat($format, date($format));
+
+        if ($dateTime && $dateTime->format($format) === date($format)) {
+            return $dateTime->format($format);
+        } else {
+            throw new Exception("Invalid date format '{$format}'");
+        }
     }
 
     /**
